@@ -1,0 +1,23 @@
+@page
+@model ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+}
+<h1>Welcome to Profile section @Model.Name !</h1>
+<div class="container">
+    <h3>@Model.Name</h3>
+    <h3>@Model.Username</h3>
+</div>
+
+<form action="" method="post">
+    <label for="Password" class="control-label col-sm-3">Password</label>
+    <div class="col-sm-8">
+        <input type="text" asp-for="Password" class="form-control" />
+    </div>
+    <select name="Access_token" class="form-control" hidden>
+            <option value="@Model.Access_token">@Model.Access_token</option>
+    </select>
+    <div class="col-sm-offset-2 col-sm-8 mt-2">
+        <input type="submit" value="Submit" class="btn btn-success"/>
+    </div>
+</form>

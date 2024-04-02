@@ -1,87 +1,66 @@
-﻿using System.Text;
+using System.Text;
 using System.Web;
+using ToDoList.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
+using ToDoList.Services;
 
-namespace ToDoList.Pages;
 
-public class IndexModel : PageModel
+namespace ToDoList.Pages
 {
-    [BindProperty]
-    public string RequestMethod { get; set; }
-
-    [BindProperty]
-    public string Data { get; set; }
-
-    [BindProperty]
-    public string BaseUrl { get; set; }
-
-
-    public void OnGet()
+    public class IndexModel : PageModel
     {
+        [BindProperty]
+        public string Message { get; set; }
+        [BindProperty]
+        public string Username { get; set; }
+        [BindProperty]
+        public string Lastname { get; set; }
+        [BindProperty]
+        public string Firstname { get; set; }
+        [BindProperty]
+        public string NewPassword { get; set; }
+        [BindProperty]
+        public string BaseUrl { get; set; } = "http://demo2.z-bit.ee/users/get-token";
 
-    }
-
-    public async Task<IActionResult> OnPost()
-    {
-        string responseContent = "[]";
-        try
+        public void OnGet(string message)
         {
-            Uri baseURL = new Uri(BaseUrl);
+            Message = message;
+        }
 
-            HttpClient client = new HttpClient();
+        public async Task<IActionResult> OnPost()
+        {
 
-            // Any parameters? Get value, and then add to the client 
-            string key = HttpUtility.ParseQueryString(baseURL.Query).Get("key");
-            if (key != "")
+            string responseContent = "[]";
+            try
             {
-                client.DefaultRequestHeaders.Add("api-key", key);
-            }
+                var body = new { username = Username, firstname = Firstname, lastname = Lastname, newPassword = NewPassword };
 
 
-            if (RequestMethod.Equals("GET"))
-            {
-                HttpResponseMessage response = await client.GetAsync(baseURL.ToString());
-
-                if (response.IsSuccessStatusCode)
+                var results = await ApiService.Register(body);
+                var message = "Something went wrong, please try again.";
+                if (results != null)
                 {
-                    responseContent = await response.Content.ReadAsStringAsync();
+                    return RedirectToPage("Login");
                 }
-            }
+                return RedirectToPagePermanent("Index", new { message = message });
 
-            else if (RequestMethod.Equals("POST"))
+            }
+            catch (ArgumentNullException uex)
             {
-                JObject jObject = JObject.Parse(Data);
-
-                var stringContent = new StringContent(jObject.ToString(), Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.PostAsync(baseURL.ToString(), stringContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseContent = await response.Content.ReadAsStringAsync();
-
-                }
+                return RedirectToPage("Error", new { msg = uex.Message + " | URL missing or invalid." });
             }
-
-            return RedirectToPage("Response", new { result = responseContent });
-
-        }
-        catch (ArgumentNullException uex)
-        {
-            return RedirectToPage("Error", new { msg = uex.Message + " | URL missing or invalid." });
-        }
-        catch (JsonReaderException jex)
-        {
-            return RedirectToPage("Error", new { msg = jex.Message + " | Json data could not be read." });
-        }
-        catch (Exception ex)
-        {
-            return RedirectToPage("Error", new { msg = ex.Message + " | Are you missing some Json keys and values? Please check your Json data." });
+            catch (JsonReaderException jex)
+            {
+                return RedirectToPage("Error", new { msg = jex.Message + " | Json data could not be read." });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToPage("Error", new { msg = ex.Message + " | Are you missing some Json keys and values? Please check your Json data." });
+            }
         }
     }
 }
-
-

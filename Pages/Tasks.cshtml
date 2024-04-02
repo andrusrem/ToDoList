@@ -1,0 +1,81 @@
+@page
+@model TasksModel
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<h2>Task manager</h2>
+<form method="post" class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-8 ">
+            <select name="Access_token" class="form-control" hidden>
+                <option value="@Model.Access_token">@Model.Access_token</option>
+            </select>
+        </div>
+        <div class="form-check">
+            <div class="form-check">
+            <input class="form-check-input" asp-for="@Model.RequestMethod" type="radio" value="POST">
+            <label class="form-check-label" for="RequestMethod">
+                Create new Task
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="@Model.RequestMethod" type="radio" value="GET">
+            <label class="form-check-label" for="RequestMethod">
+                Show all Tasks
+            </label>
+        </div>
+        <label for="Title" class="control-label col-sm-3">Title</label>
+        <div class="col-sm-8">
+            <input type="text" asp-for="Title" class="form-control" />
+        </div>
+        <label for="Desc" class="control-label col-sm-3">Description</label>
+        <div class="col-sm-8">
+            <input type="text" asp-for="Desc" class="form-control" />
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 mt-2">
+            <input type="submit" value="Submit" class="btn btn-success"/>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Title</th>
+      <th scope="col">Desc</th>
+      <th scope="col">Is it done?</th>
+    </tr>
+</thead>
+@if(@Model.ListTasks != null)
+{
+  foreach(var task in @Model.ListTasks)
+{
+  <tbody>
+    <tr>
+      <th scope="row">@task.Id</th>
+      <td>@task.Title</td>
+      <td>@task.Desc</td>
+      <td><input class="form-check-input" type="checkbox" value="@task.Marked_as_done" id="flexCheckDefault"></td>
+      
+      <td>
+        <form asp-route-itemid="@task.Id" method="post">
+        <select name="Access_token" class="form-control" hidden>
+            <option value="@Model.Access_token">@Model.Access_token</option>
+        </select>
+        <input class="form-check-input" asp-for="@Model.RequestMethod" type="radio" value="DELETE">
+        <label class="form-check-label" for="RequestMethod">
+            Delete?
+        </label>
+        <div class="col-sm-offset-2 col-sm-8">
+            <input type="submit" value="Delete" asp-route-id="@task.Id" class="btn btn-danger"/>
+        </div>
+        </form>
+      </td>
+    </tr>
+  </tbody>
+
+}
+}
+</table>

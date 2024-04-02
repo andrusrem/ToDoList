@@ -1,0 +1,36 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login Form</h2>
+<form method="post" class="form-horizontal">
+    <div class="form-group">
+         <div class="form-check">
+            <div class="form-check">
+            <input class="form-check-input" asp-for="@Model.RequestMethod" type="radio" value="POST">
+            <label class="form-check-label" for="RequestMethod">
+                Login to tasks
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="@Model.RequestMethod" type="radio" value="GET">
+            <label class="form-check-label" for="RequestMethod">
+                Show Profile
+            </label>
+        </div>
+
+        <label for="Username" class="control-label col-sm-3">Username</label>
+        <div class="col-sm-8">
+            <input type="text" asp-for="Username" class="form-control" />
+        </div>
+        <label for="Password" class="control-label col-sm-3">Password</label>
+        <div class="col-sm-8">
+            <input type="text" asp-for="Password" class="form-control" />
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 mt-2">
+            <input type="submit" value="Submit" class="btn btn-success"/>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,42 @@
+@page
+@model ResponseTasksModel
+@{
+    ViewData["Title"] = "Response";
+}
+
+@* <h1 class="text-danger">Result</h1>
+<div>@Model.ResponseBody</div> *@
+@* <h1>@Model.Access_token</h1> *@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Title</th>
+      <th scope="col">Desc</th>
+      <th scope="col">Is it done?</th>
+    </tr>
+</thead>
+@if(@Model.Tasks != null)
+{
+  foreach(var task in @Model.Tasks)
+{
+  <tbody>
+    <tr>
+      <th scope="row">@task.Id</th>
+      <td>@task.Title</td>
+      <td>@task.Desc</td>
+      <td><input class="form-check-input" type="checkbox" value="@task.Marked_as_done" id="flexCheckDefault"></td>
+      
+      <td>
+        <form asp-route-itemid="@task.Id" method="post">
+        <select hidden name="Access_token" id="" ><option value="@Model.Access_token">@Model.Access_token</option></select>
+        <button class="btn btn-danger" type="submit" value="Submit" name="@task.Id" asp-route-id="@task.Id">delete</button></form>
+      </td>
+    </tr>
+  </tbody>
+}
+}
+
+
+
+</table>
